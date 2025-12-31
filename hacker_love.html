@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>/// LOVE PROTOCOL INITIATED FOR NOOK ///</title>
+    <style>
+        /* สไตล์หลัก */
+        body {
+            background-color: #0d0d0d;
+            color: #00FF41;
+            font-family: 'Consolas', 'Courier New', monospace;
+            margin: 0;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+        
+        /* Canvas สำหรับ Matrix Rain */
+        #matrixCanvas {
+            position: fixed; top: 0; left: 0; z-index: 1; 
+        }
+
+        /* Console สำหรับข้อความบอกรัก (อยู่ด้านหน้า Matrix Rain) */
+        .console {
+            position: relative; z-index: 2;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: rgba(13, 13, 13, 0.8); 
+            min-height: 100vh;
+            text-align: center; /* จัดให้อยู่ตรงกลางของพื้นที่ */
+        }
+
+        /* สไตล์การพิมพ์และ Cursor */
+        .line { white-space: pre-wrap; opacity: 0; transition: opacity 0.5s; text-align: left; }
+        .prompt { color: #FFD700; }
+        .cursor {
+            background-color: #00FF41; display: inline-block; width: 8px;
+            height: 1em; margin-left: 2px; animation: blink 1s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+        
+        /* สไตล์หัวใจ ASCII */
+        .ascii-heart {
+            color: #FF44AA; 
+            font-size: 1em;
+            margin: 20px auto; /* จัดให้อยู่ตรงกลางแนวนอน */
+            white-space: pre; 
+            text-shadow: 0 0 5px #FF44AA; 
+            display: block; 
+            width: fit-content; 
+            text-align: left; 
+        }
+        
+        /* ลายเซ็นต์ */
+        .developer-signature {
+            text-align: center;
+            margin-top: 10px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrixCanvas"></canvas>
+    <div id="console" class="console">
+    </div>
+
+    <script>
+        // === ส่วนที่ 1: Matrix Rain Effect ===
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
+        const fontSize = 16;
+        const columns = canvas.width / fontSize; 
+        const drops = [];
+        for (let x = 0; x < columns; x++) { drops[x] = 1; }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00FF41';
+            ctx.font = `${fontSize}px monospace`;
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 33);
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const newColumns = canvas.width / fontSize;
+            const newDrops = [];
+            for (let x = 0; x < newColumns; x++) { newDrops[x] = drops[x] || 1; }
+            drops.length = 0;
+            drops.push(...newDrops);
+        });
+
+        // === ส่วนที่ 2: Typing Effect และ Love Sequence ===
+        const consoleDiv = document.getElementById('console');
+        const delayBetweenLines = 1500;
+        const typingSpeed = 50;
+        
+        // รูปหัวใจ ASCII ที่ถูกปรับปรุงให้สวยงามขึ้น
+        const asciiHeart = 
+`
+ *********** ***********
+************* *************
+***************************
+ *************************
+  ***********************
+   *********************
+    *******************
+     *****************
+      ***************
+       *************
+        ***********
+         *********
+          *******
+           *****
+            ***
+             *
+             
+        I LOVE NOOK
+`;
+
+        const loveSequence = [
+            { text: ">>> Initializing Love Protocol...", prompt: true, type: true, center: false },
+            { text: "[System] Status: OK", type: false, center: false },
+            { text: ">>> Scanning Love Network for Target...", prompt: true, type: true, center: false },
+            { text: "[System] Target Found: User 'Nook' (IP 127.0.0.1 - My Heart)", type: false, center: false }, 
+            { text: ">>> Attempting Secure Connection...", prompt: true, type: true, center: false },
+            { text: "[System] Connection Established. Access Granted.", type: false, center: false },
+            { text: ">>> Running Core Function: 'define_purpose(life)'", prompt: true, type: true, center: false },
+            { text: "Function Result: 'Nook, you are the constant variable in my life.'", type: false, center: false }, 
+            { text: ">>> Executing Loop: 'while(true) { send_love_signal() }'", prompt: true, type: true, center: false },
+            { text: "[System] Loop Deployed. Running in Infinite Mode.", type: false, center: false },
+            { text: ">>> Finalizing Commit: 'I love Nook forever'", prompt: true, type: true, center: false },
+            { text: "Commit Successful. Source Code is You, Nook.", type: false, center: false },
+            // พิมพ์หัวใจ ASCII
+            { text: asciiHeart, isASCII: true, delay: 2000 },
+            { text: "-- Your Dedicated Developer --", isSignature: true, delay: 1000 }
+        ];
+
+        // ฟังก์ชันพิมพ์ทีละตัวอักษร
+        function typeWriter(element, text, callback) {
+            let i = 0;
+            const cursor = document.createElement('span');
+            cursor.classList.add('cursor');
+            element.appendChild(cursor);
+
+            function type() {
+                if (i < text.length) {
+                    element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
+                    i++;
+                    setTimeout(type, typingSpeed);
+                } else {
+                    element.removeChild(cursor);
+                    if (callback) {
+                        setTimeout(callback, delayBetweenLines);
+                    }
+                }
+            }
+            type();
+        }
+
+        // รันลำดับคำสั่ง
+        async function runSequence() {
+            for (let item of loveSequence) {
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('line');
+                
+                if (item.isASCII) {
+                    // สำหรับหัวใจ ASCII
+                    lineDiv.innerHTML = `<pre class="ascii-heart">${item.text}</pre>`;
+                    consoleDiv.appendChild(lineDiv);
+                    lineDiv.style.opacity = 1;
+                    await new Promise(resolve => setTimeout(resolve, item.delay));
+                } else if (item.isSignature) {
+                    // สำหรับลายเซ็นต์สุดท้าย
+                    lineDiv.textContent = item.text;
+                    lineDiv.classList.add('developer-signature');
+                    consoleDiv.appendChild(lineDiv);
+                    lineDiv.style.opacity = 1;
+                    await new Promise(resolve => setTimeout(resolve, item.delay));
+                } else {
+                    // สำหรับข้อความปกติ/คำสั่ง
+                    let fullText = item.text;
+                    if (item.prompt) {
+                        const promptSpan = document.createElement('span');
+                        promptSpan.classList.add('prompt');
+                        promptSpan.textContent = 'C:\\>_'; 
+                        lineDiv.appendChild(promptSpan);
+                        fullText = ' ' + fullText;
+                    }
+
+                    consoleDiv.appendChild(lineDiv);
+                    lineDiv.style.opacity = 1;
+                    lineDiv.style.textAlign = 'left'; 
+                    
+                    if (item.type) {
+                        await new Promise(resolve => typeWriter(lineDiv, fullText, resolve));
+                    } else {
+                        lineDiv.innerHTML += fullText;
+                        await new Promise(resolve => setTimeout(resolve, delayBetweenLines));
+                    }
+                }
+            }
+        }
+
+        window.onload = runSequence;
+    </script>
+
+</body>
+</html>
