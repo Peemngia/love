@@ -1,219 +1,279 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>/// LOVE PROTOCOL INITIATED FOR NOOK ///</title>
-    <style>
-        /* สไตล์หลัก */
-        body {
-            background-color: #0d0d0d;
-            color: #00FF41;
-            font-family: 'Consolas', 'Courier New', monospace;
-            margin: 0;
-            overflow: hidden;
-            line-height: 1.4;
-        }
-        
-        /* Canvas สำหรับ Matrix Rain */
-        #matrixCanvas {
-            position: fixed; top: 0; left: 0; z-index: 1; 
-        }
+<title>เข้ารหัสลับแห่งหัวใจ</title>
+<style>
+  /* --- CSS หลัก (เหมือนเดิม) --- */
+  body {
+    background-color: #000;
+    color: #0F0;
+    font-family: 'Share Tech Mono', monospace;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; 
+    min-height: 150vh; 
+    padding-top: 5vh; 
+    padding-bottom: 50vh; 
+    flex-direction: column;
+    align-items: center;
+  }
 
-        /* Console สำหรับข้อความบอกรัก (อยู่ด้านหน้า Matrix Rain) */
-        .console {
-            position: relative; z-index: 2;
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            background-color: rgba(13, 13, 13, 0.8); 
-            min-height: 100vh;
-            text-align: center; /* จัดให้อยู่ตรงกลางของพื้นที่ */
-        }
+  .terminal {
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1px solid #0F0;
+    box-shadow: 0 0 15px #0F0;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    z-index: 10;
+    text-align: left;
+    white-space: pre-wrap;
+    margin-bottom: 50px; 
+  }
+  
+  /* --- Glitch Effect (และอื่นๆ เหมือนเดิม) --- */
+  .glitch { position: relative; display: inline-block; color: #F33; }
+  .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; clip: rect(0, 900px, 0, 0); }
+  .glitch::before { left: 2px; text-shadow: -1px 0 rgba(0, 255, 255, 0.7); animation: glitch-anim-1 2s infinite linear alternate-reverse; }
+  .glitch::after { left: -2px; text-shadow: 1px 0 rgba(255, 255, 0, 0.7); animation: glitch-anim-2 3s infinite linear alternate-reverse; }
 
-        /* สไตล์การพิมพ์และ Cursor */
-        .line { white-space: pre-wrap; opacity: 0; transition: opacity 0.5s; text-align: left; }
-        .prompt { color: #FFD700; }
-        .cursor {
-            background-color: #00FF41; display: inline-block; width: 8px;
-            height: 1em; margin-left: 2px; animation: blink 1s infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-        
-        /* สไตล์หัวใจ ASCII */
-        .ascii-heart {
-            color: #FF44AA; 
-            font-size: 1em;
-            margin: 20px auto; /* จัดให้อยู่ตรงกลางแนวนอน */
-            white-space: pre; 
-            text-shadow: 0 0 5px #FF44AA; 
-            display: block; 
-            width: fit-content; 
-            text-align: left; 
-        }
-        
-        /* ลายเซ็นต์ */
-        .developer-signature {
-            text-align: center;
-            margin-top: 10px;
-            display: block;
-        }
-    </style>
+  @keyframes glitch-anim-1 { 0% { clip: rect(42px, 9999px, 44px, 0); } 10% { clip: rect(10px, 9999px, 20px, 0); } 20% { clip: rect(80px, 9999px, 20px, 0); } 30% { clip: rect(50px, 9999px, 70px, 0); } 40% { clip: rect(10px, 9999px, 90px, 0); } 50% { clip: rect(30px, 9999px, 40px, 0); } 60% { clip: rect(60px, 9999px, 80px, 0); } 70% { clip: rect(20px, 9999px, 40px, 0); } 80% { clip: rect(80px, 9999px, 90px, 0); } 90% { clip: rect(30px, 9999px, 40px, 0); } 100% { clip: rect(70px, 9999px, 90px, 0); } }
+  @keyframes glitch-anim-2 { 0% { clip: rect(10px, 9999px, 90px, 0); } 15% { clip: rect(50px, 9999px, 70px, 0); } 30% { clip: rect(20px, 9999px, 40px, 0); } 45% { clip: rect(80px, 9999px, 90px, 0); } 60% { clip: rect(30px, 9999px, 40px, 0); } 75% { clip: rect(60px, 9999px, 80px, 0); } 90% { clip: rect(42px, 9999px, 44px, 0); } 100% { clip: rect(10px, 9999px, 20px, 0); } }
+  
+  .typing-cursor { display: inline-block; width: 8px; height: 1.2em; background-color: #0F0; margin-left: 2px; vertical-align: middle; animation: blink 0.7s step-end infinite; }
+  @keyframes blink { from, to { background-color: transparent; } 50% { background-color: #0F0; } }
+  
+  .terminal h1 { color: #39F; text-shadow: 0 0 5px #39F; margin-bottom: 20px; font-size: 1.8em; }
+  .terminal p { margin-bottom: 15px; line-height: 1.5; }
+  .terminal button { background-color: #0A0; color: #000; border: none; padding: 10px 20px; border-radius: 5px; font-family: 'Share Tech Mono', monospace; font-size: 1em; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; margin-top: 20px; display: block; width: 100%; text-align: center; }
+  .terminal button:hover { background-color: #0F0; box-shadow: 0 0 8px #0F0; }
+  #decryptedMessage { margin-top: 20px; color: #F33; text-shadow: 0 0 5px #F33; }
+  #statusButtons { margin-top: 20px; text-align: center; display: none; }
+  #statusButtons .status-btn { background-color: #39F; color: #000; border: none; padding: 10px 15px; border-radius: 5px; font-family: 'Share Tech Mono', monospace; font-size: 0.9em; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; margin: 5px; display: inline-block; }
+  #statusButtons .status-btn:hover { background-color: #6CF; box-shadow: 0 0 8px #6CF; }
+  #statusButtons .reject-btn { background-color: #F33; }
+  #statusButtons .reject-btn:hover { background-color: #F66; box-shadow: 0 0 8px #F66; }
+  #finalResponse { margin-top: 20px; display: none; }
+  #finalResponse p { color: #0F0; font-size: 1.2em; padding: 15px; border: 1px solid #0F0; border-radius: 5px; background-color: rgba(0, 50, 0, 0.5); animation: revealText 1s forwards; }
+  @keyframes revealText { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  #matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+</style>
+
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 </head>
 <body>
 
-    <canvas id="matrixCanvas"></canvas>
-    <div id="console" class="console">
+<canvas id="matrixCanvas"></canvas>
+
+<div class="terminal">
+  <h1><span style="color: #F33;">&lt;</span> สถานะ: ตรวจพบข้อมูลลับ <span style="color: #F33;">&gt;</span></h1>
+  <p>
+    กำลังดำเนินการวิเคราะห์ข้อมูล<br>
+    โปรดระบุคำสั่งเพื่อถอดรหัส...<br>
+    <span style="color: #FFD700;">&gt; decrypt --heart-data --target=พลอย</span>
+  </p>
+
+  <button id="mainButton" onclick="revealLoveMessage()">
+    [ENTER] ยืนยันคำสั่ง
+  </button>
+
+  <div id="decryptedMessage">
+    <p>
+      <span style="color: #0F0;">&gt; การถอดรหัสสำเร็จ:</span><br>
+      <span style="color: #FFD700;">&gt; แหล่งที่มา: พีม</span><br>
+      <span style="color: #FFD700;">&gt; เป้าหมาย: พลอย</span><br>
+      <br>
+      <span id="glitchText" class="glitch" data-text="Message:">
+        Message:
+      </span>
+      
+      <span id="typingArea" style="color: #F33; font-size: 1.3em;">
+        <span class="typing-cursor"></span>
+      </span>
+    </p>
+  </div>
+  
+  <div id="statusButtons">
+    <p style="color: #FFD700; margin-top: 10px;">
+        &gt; ระบบกำลังรอการตอบกลับ: เลือกสถานะที่ต้องการกำหนด
+    </p>
+    <button class="status-btn" onclick="selectStatus('คุย')">
+        1. เป็นคนคุย
+    </button>
+    <button class="status-btn" onclick="selectStatus('แฟน')">
+        2. เป็นแฟน
+    </button>
+    <button class="status-btn reject-btn" onclick="selectStatus('ปฏิเสธ')">
+        3. ไม่เป็นอะไรเลย
+    </button>
+  </div>
+  
+  <div id="finalResponse">
     </div>
+</div>
 
-    <script>
-        // === ส่วนที่ 1: Matrix Rain Effect ===
-        const canvas = document.getElementById('matrixCanvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()';
-        const fontSize = 16;
-        const columns = canvas.width / fontSize; 
-        const drops = [];
-        for (let x = 0; x < columns; x++) { drops[x] = 1; }
+<audio id="clickSound" src="https://www.soundjay.com/buttons/beep-07.mp3" preload="auto"></audio>
 
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#00FF41';
-            ctx.font = `${fontSize}px monospace`;
-            for (let i = 0; i < drops.length; i++) {
-                const text = characters.charAt(Math.floor(Math.random() * characters.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) { drops[i] = 0; }
-                drops[i]++;
-            }
-        }
-        setInterval(drawMatrix, 33);
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            const newColumns = canvas.width / fontSize;
-            const newDrops = [];
-            for (let x = 0; x < newColumns; x++) { newDrops[x] = drops[x] || 1; }
-            drops.length = 0;
-            drops.push(...newDrops);
-        });
+<script>
+  // 2. Firebase Configuration (ใช้ค่าที่คุณให้มา)
+  const firebaseConfig = {
+    apiKey: "AIzaSyDRlB6q1NJeSnO4JsLQcUHr28XGKo573sk",
+    authDomain: "peem-dc962.firebaseapp.com",
+    databaseURL: "https://peem-dc962-default-rtdb.firebaseio.com",
+    projectId: "peem-dc962",
+    storageBucket: "peem-dc962.firebasestorage.app",
+    messagingSenderId: "1021248731842",
+    appId: "1:1021248731842:web:7b5fdf322f9ca1af78595b",
+    measurementId: "G-06R4YSWH3H"
+  };
 
-        // === ส่วนที่ 2: Typing Effect และ Love Sequence ===
-        const consoleDiv = document.getElementById('console');
-        const delayBetweenLines = 1500;
-        const typingSpeed = 50;
-        
-        // รูปหัวใจ ASCII ที่ถูกปรับปรุงให้สวยงามขึ้น
-        const asciiHeart = 
-`
- *********** ***********
-************* *************
-***************************
- *************************
-  ***********************
-   *********************
-    *******************
-     *****************
-      ***************
-       *************
-        ***********
-         *********
-          *******
-           *****
-            ***
-             *
-             
-        I LOVE NOOK
-`;
+  // Initialize Firebase (ไม่ต้องใช้ getAnalytics ใน HTML ธรรมดา)
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database(); // อ้างอิงถึง Database
 
-        const loveSequence = [
-            { text: ">>> Initializing Love Protocol...", prompt: true, type: true, center: false },
-            { text: "[System] Status: OK", type: false, center: false },
-            { text: ">>> Scanning Love Network for Target...", prompt: true, type: true, center: false },
-            { text: "[System] Target Found: User 'Nook' (IP 127.0.0.1 - My Heart)", type: false, center: false }, 
-            { text: ">>> Attempting Secure Connection...", prompt: true, type: true, center: false },
-            { text: "[System] Connection Established. Access Granted.", type: false, center: false },
-            { text: ">>> Running Core Function: 'define_purpose(life)'", prompt: true, type: true, center: false },
-            { text: "Function Result: 'Nook, you are the constant variable in my life.'", type: false, center: false }, 
-            { text: ">>> Executing Loop: 'while(true) { send_love_signal() }'", prompt: true, type: true, center: false },
-            { text: "[System] Loop Deployed. Running in Infinite Mode.", type: false, center: false },
-            { text: ">>> Finalizing Commit: 'I love Nook forever'", prompt: true, type: true, center: false },
-            { text: "Commit Successful. Source Code is You, Nook.", type: false, center: false },
-            // พิมพ์หัวใจ ASCII
-            { text: asciiHeart, isASCII: true, delay: 2000 },
-            { text: "-- Your Dedicated Developer --", isSignature: true, delay: 1000 }
-        ];
+  // --- การกำหนดค่าหลัก ---
+  const TYPING_TEXT = `ถึง พลอย...
+        ข้อมูลหัวใจของ พีม ยืนยันว่า...
+        ฉันตกหลุมรักคุณเข้าให้แล้ว
+        นี่ไม่ใช่ความผิดพลาดของระบบแน่นอน`;
 
-        // ฟังก์ชันพิมพ์ทีละตัวอักษร
-        function typeWriter(element, text, callback) {
-            let i = 0;
-            const cursor = document.createElement('span');
-            cursor.classList.add('cursor');
-            element.appendChild(cursor);
+  let i = 0;
+  let typingInterval;
+  const typingArea = document.getElementById('typingArea');
+  const cursor = typingArea.querySelector('.typing-cursor');
+  const mainButton = document.getElementById('mainButton');
+  const messageDiv = document.getElementById('decryptedMessage');
+  const statusButtonsDiv = document.getElementById('statusButtons');
+  const finalResponseDiv = document.getElementById('finalResponse');
+  const glitchText = document.getElementById('glitchText');
+  const clickSound = document.getElementById('clickSound');
 
-            function type() {
-                if (i < text.length) {
-                    element.insertBefore(document.createTextNode(text.charAt(i)), cursor);
-                    i++;
-                    setTimeout(type, typingSpeed);
-                } else {
-                    element.removeChild(cursor);
-                    if (callback) {
-                        setTimeout(callback, delayBetweenLines);
-                    }
-                }
-            }
-            type();
-        }
+  function playClick() {
+    clickSound.currentTime = 0;
+    clickSound.play().catch(e => console.error("Sound play failed:", e));
+  }
+  
+  function typeWriter() {
+    if (i < TYPING_TEXT.length) {
+      typingArea.insertBefore(document.createTextNode(TYPING_TEXT.charAt(i)), cursor);
+      i++;
+      if (i % 3 === 0) { playClick(); }
+      typingInterval = setTimeout(typeWriter, 50);
+    } else {
+      clearInterval(typingInterval);
+      cursor.style.display = 'none';
+      statusButtonsDiv.style.display = 'block';
+      statusButtonsDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
 
-        // รันลำดับคำสั่ง
-        async function runSequence() {
-            for (let item of loveSequence) {
-                const lineDiv = document.createElement('div');
-                lineDiv.classList.add('line');
-                
-                if (item.isASCII) {
-                    // สำหรับหัวใจ ASCII
-                    lineDiv.innerHTML = `<pre class="ascii-heart">${item.text}</pre>`;
-                    consoleDiv.appendChild(lineDiv);
-                    lineDiv.style.opacity = 1;
-                    await new Promise(resolve => setTimeout(resolve, item.delay));
-                } else if (item.isSignature) {
-                    // สำหรับลายเซ็นต์สุดท้าย
-                    lineDiv.textContent = item.text;
-                    lineDiv.classList.add('developer-signature');
-                    consoleDiv.appendChild(lineDiv);
-                    lineDiv.style.opacity = 1;
-                    await new Promise(resolve => setTimeout(resolve, item.delay));
-                } else {
-                    // สำหรับข้อความปกติ/คำสั่ง
-                    let fullText = item.text;
-                    if (item.prompt) {
-                        const promptSpan = document.createElement('span');
-                        promptSpan.classList.add('prompt');
-                        promptSpan.textContent = 'C:\\>_'; 
-                        lineDiv.appendChild(promptSpan);
-                        fullText = ' ' + fullText;
-                    }
+  function revealLoveMessage() {
+    playClick();
+    if (mainButton.textContent.includes('ยืนยันคำสั่ง')) {
+      messageDiv.style.display = 'block';
+      finalResponseDiv.style.display = 'none';
+      statusButtonsDiv.style.display = 'none';
+      
+      i = 0;
+      typingArea.textContent = '';
+      typingArea.appendChild(cursor);
+      cursor.style.display = 'inline-block';
+      typeWriter();
+      
+      mainButton.textContent = '[ABORT] ยกเลิกกระบวนการ';
+      mainButton.style.backgroundColor = '#600';
+      mainButton.style.boxShadow = '0 0 8px #F33';
 
-                    consoleDiv.appendChild(lineDiv);
-                    lineDiv.style.opacity = 1;
-                    lineDiv.style.textAlign = 'left'; 
-                    
-                    if (item.type) {
-                        await new Promise(resolve => typeWriter(lineDiv, fullText, resolve));
-                    } else {
-                        lineDiv.innerHTML += fullText;
-                        await new Promise(resolve => setTimeout(resolve, delayBetweenLines));
-                    }
-                }
-            }
-        }
+      glitchText.setAttribute('data-text', 'Message:');
+      glitchText.style.animationPlayState = 'running';
+      
+    } else {
+      clearTimeout(typingInterval);
+      messageDiv.style.display = 'none';
+      statusButtonsDiv.style.display = 'none';
+      finalResponseDiv.style.display = 'none';
+      glitchText.style.animationPlayState = 'paused';
+      
+      mainButton.textContent = '[ENTER] ยืนยันคำสั่ง';
+      mainButton.style.backgroundColor = '#0A0';
+      mainButton.style.boxShadow = '0 0 8px #0F0';
+    }
+  }
 
-        window.onload = runSequence;
-    </script>
+  // *** ฟังก์ชันสำคัญ: บันทึกคำตอบไปยัง Firebase ***
+  function selectStatus(status) {
+    playClick();
+    
+    // 3. บันทึกคำตอบใน Firebase
+    db.ref('PloyStatus').set({
+        status: status,
+        timestamp: new Date().toLocaleString('th-TH'),
+        sender: 'Phim'
+    }).then(() => {
+        console.log("Status successfully sent to Firebase!");
+    }).catch((error) => {
+        console.error("Error sending status:", error);
+    });
+
+    statusButtonsDiv.style.display = 'none';
+    
+    let responseText = "";
+    
+    if (status === 'คุย') {
+        responseText = "<span style='color: #FFD700;'>&gt; สถานะใหม่: [คนคุย]</span><br>ยินดีที่ได้รับคำตอบ! พีมและพลอยมาเริ่มกระบวนการ 'ทำความรู้จัก' (Initiating Relationship Protocol) กันเลยนะ! **(ข้อมูลถูกส่งไปยัง Admin Server แล้ว)**";
+    } else if (status === 'แฟน') {
+        responseText = "<span style='color: #F33;'>&gt; สถานะใหม่: [แฟน]</span><br>การเชื่อมต่อสำเร็จ! พีมและพลอยเป็นคู่กันแล้วนะ! หัวใจเต้นแรงเกินขีดจำกัด! **(ข้อมูลถูกส่งไปยัง Admin Server แล้ว)**";
+    } else if (status === 'ปฏิเสธ') {
+        responseText = "<span style='color: #FF0000;'>&gt; สถานะ: [ปฏิเสธ]</span><br>รับทราบ. การเชื่อมต่อถูกยกเลิก. ถึง พีม จะรู้สึกผิดหวัง (System Error) แต่ฉันก็เคารพการตัดสินใจของ พลอย นะ. **(ข้อมูลถูกส่งไปยัง Admin Server แล้ว)**";
+    }
+
+    finalResponseDiv.innerHTML = `<p>${responseText}</p>`;
+    finalResponseDiv.style.display = 'block';
+    finalResponseDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // --- Matrix Effect (เหมือนเดิม) ---
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+-=[]{}|;:",./<>?`~';
+  const fontSize = 16;
+  const columns = canvas.width / fontSize;
+  const drops = Array.from({ length: columns }, () => 1);
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0F0';
+    ctx.font = `${fontSize}px Share Tech Mono`;
+    for (let i = 0; i < drops.length; i++) {
+      const text = characters.charAt(Math.floor(Math.random() * characters.length));
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+    requestAnimationFrame(drawMatrix);
+  }
+  drawMatrix();
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    drops.length = Math.floor(canvas.width / fontSize);
+    for (let i = 0; i < drops.length; i++) { drops[i] = 1; }
+  });
+  
+  document.addEventListener('DOMContentLoaded', () => {
+      messageDiv.style.display = 'none';
+      statusButtonsDiv.style.display = 'none';
+      glitchText.style.animationPlayState = 'paused';
+  });
+</script>
 
 </body>
 </html>
